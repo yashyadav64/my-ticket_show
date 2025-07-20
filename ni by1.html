@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMyShow - Movie Booking</title>
+  <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      background-color: #f8f8f8;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .navbar input {
+      width: 60%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+    }
+
+    .navbar .right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .sign-btn {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 5px 15px;
+      font-size: 14px;
+    }
+
+    .movie-info {
+      background: #fff;
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .movie-info h2 {
+      margin-bottom: 10px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .tags span {
+      background: #eee;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    .dates {
+      display: flex;
+      overflow-x: auto;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .date-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      border-right: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .date-tab.active {
+      background: #f06292;
+      color: white;
+      font-weight: bold;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      background: #fff;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .filters select {
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    .cinema {
+      background: #fff;
+      margin: 10px;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+
+    .cinema h4 {
+      margin-bottom: 5px;
+    }
+
+    .showtime {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .showtime button {
+      padding: 8px 15px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .extra-info {
+      font-size: 13px;
+      color: gray;
+      margin-top: 5px;
+    }
+
+    .footer-msg {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 15px;
+    }
+
+    .change-btn {
+      margin-top: 10px;
+      padding: 8px 15px;
+      border: 1px solid #e91e63;
+      background: none;
+      color: #e91e63;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    @media(min-width: 768px){
+      body {
+        max-width: 500px;
+        margin: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <img src="https://in.bmscdn.com/webin/common/icons/logo.svg" height="25" alt="BookMyShow">
+    <input type="text" placeholder="Search for Movies, Events...">
+    <div class="right">
+      <span>📍Indore</span>
+      <button class="sign-btn">Sign In</button>
+    </div>
+  </div>
+
+  <!-- Movie Info -->
+  <div class="movie-info">
+    <h2>Nikita Roy - (Hindi)</h2>
+    <div class="tags">
+      <span>UA13+</span>
+      <span>Horror</span>
+      <span>Mystery</span>
+      <span>Thriller</span>
+    </div>
+  </div>
+
+  <!-- Date Tabs -->
+  <div class="dates" id="dateTabs">
+    <div class="date-tab active">MON<br>21 JUL</div>
+    <div class="date-tab">TUE<br>22 JUL</div>
+    <div class="date-tab">WED<br>23 JUL</div>
+    <div class="date-tab">THU<br>24 JUL</div>
+    <div class="date-tab">FRI<br>25 JUL</div>
+    <div class="date-tab">SAT<br>26 JUL</div>
+    <div class="date-tab">SUN<br>27 JUL</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <select>
+      <option>Hindi - 2D</option>
+    </select>
+    <select>
+      <option>Price Range</option>
+    </select>
+    <select>
+      <option>Preferred Time</option>
+    </select>
+  </div>
+
+  <!-- Cinemas -->
+  <div class="cinema">
+    <h4>Kalyan Cinemas: Rajendra Nagar, Indore</h4>
+    <div class="showtime">
+      <span class="extra-info">Cancellation available</span>
+       
+       <a href="c1.html">
+  <button class="book-btn">06:00 PM</button>
+</a>
+    </div>
+  </div>
+
+  <div class="cinema">
+    <h4>Fundore Cinemas, Rau: Indore</h4>
+    <div class="showtime">
+      <span class="extra-info">M-Ticket | Food & Beverage</span>
+      <button>05:25 PM</button>
+    </div>
+  </div>
+
+  <!-- Fallback -->
+  <div class="footer-msg">
+    Unable to find what you are looking for? <br>
+    <button class="change-btn">Change Location</button>
+  </div>
+
+  <!-- JavaScript for Date Tab Selection -->
+  <script>
+    const tabs = document.querySelectorAll('.date-tab');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all
+        tabs.forEach(t => t.classList.remove('active'));
+        // Add active to clicked tab
+        tab.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
