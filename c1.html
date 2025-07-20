@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie Seat Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .seats-select, .seat-layout {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .seat-num, .seat-box {
+      padding: 10px 15px;
+      border-radius: 5px;
+      background: #eee;
+      cursor: pointer;
+    }
+
+    .seat-num.selected, .seat-box.selected {
+      background: #e91e63;
+      color: white;
+      font-weight: bold;
+    }
+
+    .seat-box.booked {
+      background: #999;
+      cursor: not-allowed;
+      color: #fff;
+    }
+
+    .form-section {
+      margin: 20px 0;
+    }
+
+    input {
+      padding: 8px;
+      width: 80%;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      background: #e91e63;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .confirmation {
+      margin-top: 30px;
+      font-size: 16px;
+      color: green;
+    }
+
+    .admin-box {
+      background: #fafafa;
+      margin-top: 20px;
+      padding: 15px;
+      text-align: left;
+      font-size: 14px;
+      border: 1px dashed #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎟️ Movie Seat Booking</h2>
+
+    <!-- Step 1: Seat Count -->
+    <div id="step1">
+      <p><strong>How many seats?</strong></p>
+      <div class="seats-select" id="seatCountDiv"></div>
+      <button class="btn" onclick="goToSeatLayout()">Next</button>
+    </div>
+
+    <!-- Step 2: Seat Layout -->
+    <div id="step2" class="hidden">
+      <p><strong>Select your seats:</strong></p>
+      <div class="seat-layout" id="seatLayout"></div>
+      <button class="btn" onclick="goToForm()">Next</button>
+    </div>
+
+    <!-- Step 3: User Form -->
+    <div id="step3" class="hidden">
+      <div class="form-section">
+        <input type="text" id="username" placeholder="Enter your name" required><br>
+        <input type="text" id="mobile" placeholder="Enter mobile number" required><br>
+        <p id="totalAmount"></p>
+        <button class="btn" onclick="submitBooking()">Proceed to Pay</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Confirmation -->
+    <div id="step4" class="hidden">
+      <div class="confirmation">
+        ✅ Your seats are booked successfully!<br>
+        Thank you for booking.
+      </div>
+
+      <div class="admin-box" id="adminBox">
+        <strong>Admin Panel:</strong><br>
+        <!-- Booking info will be shown here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let seatCount = 2;
+    let selectedSeats = [];
+    let seatNumbers = [];
+    const seatPrice = 150;
+
+    // Step 1 - Select Seat Count
+    const seatCountDiv = document.getElementById("seatCountDiv");
+    for (let i = 1; i <= 10; i++) {
+      const btn = document.createElement("div");
+      btn.innerText = i;
+      btn.className = "seat-num";
+      if (i === seatCount) btn.classList.add("selected");
+      btn.onclick = () => {
+        seatCount = i;
+        document.querySelectorAll(".seat-num").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      };
+      seatCountDiv.appendChild(btn);
+    }
+
+    function goToSeatLayout() {
+      document.getElementById("step1").classList.add("hidden");
+      document.getElementById("step2").classList.remove("hidden");
+
+      const seatLayout = document.getElementById("seatLayout");
+      seatLayout.innerHTML = '';
+      for (let i = 1; i <= 30; i++) {
+        const seat = document.createElement("div");
+        seat.innerText = "S" + i;
+        seat.className = "seat-box";
+        seat.onclick = () => {
+          if (seat.classList.contains("booked")) return;
+          seat.classList.toggle("selected");
+
+          const number = seat.innerText;
+          if (selectedSeats.includes(number)) {
+            selectedSeats = selectedSeats.filter(s => s !== number);
+          } else {
+            if (selectedSeats.length < seatCount) {
+              selectedSeats.push(number);
+            } else {
+              alert(`You can only select ${seatCount} seats`);
+              seat.classList.remove("selected");
+            }
+          }
+        };
+        seatLayout.appendChild(seat);
+      }
+    }
+
+    function goToForm() {
+      if (selectedSeats.length !== seatCount) {
+        alert("Please select exactly " + seatCount + " seats");
+        return;
+      }
+      document.getElementById("step2").classList.add("hidden");
+      document.getElementById("step3").classList.remove("hidden");
+
+      document.getElementById("totalAmount").innerText =
+        "Total to pay: ₹" + (seatCount * seatPrice);
+    }
+
+    function submitBooking() {
+      const name = document.getElementById("username").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+
+      if (!name || !mobile) {
+        alert("Please enter your name and mobile number");
+        return;
+      }
+
+      document.getElementById("step3").classList.add("hidden");
+      document.getElementById("step4").classList.remove("hidden");
+
+      const adminInfo = `
+        Name: ${name}<br>
+        Mobile: ${mobile}<br>
+        Seats Booked: ${selectedSeats.join(", ")}<br>
+        Total Paid: ₹${seatCount * seatPrice}<br>
+      `;
+      document.getElementById("adminBox").innerHTML += "<hr>" + adminInfo;
+
+      // Dummy payment (redirect to any payment URL or show success msg)
+      setTimeout(() => {
+        alert("Payment Successful ✅");
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
