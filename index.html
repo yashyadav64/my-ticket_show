@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  <title>My tickets</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #fff;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .left-nav, .right-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      color: #e4002b;
+    }
+
+    .logo span {
+      color: #000;
+    }
+
+    select {
+      padding: 7px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    .search-container input {
+      padding: 10px 40px 10px 15px;
+      width: 260px;
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      font-size: 14px;
+      background-color: #f0f0f0;
+      transition: 0.3s ease;
+    }
+
+    .search-container input:focus {
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 8px rgba(228, 0, 43, 0.2);
+    }
+
+    .search-container::after {
+      content: "🔍";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 16px;
+      color: #999;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #e4002b;
+    }
+
+    .login-btn {
+      padding: 8px 18px;
+      background: linear-gradient(145deg, #e4002b, #c10024);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(228, 0, 43, 0.3);
+      transition: 0.3s;
+    }
+
+    .login-btn:hover {
+      background: #000;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .menu-icon {
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 220px;
+      height: 100vh;
+      background: #fff;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+      padding: 20px;
+      transition: left 0.3s ease;
+      z-index: 1100;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar a {
+      display: block;
+      margin: 18px 0;
+      font-weight: 500;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover {
+      color: #e4002b;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .menu-icon {
+        display: block;
+      }
+
+      .left-nav, .right-nav {
+        flex: 1 1 100%;
+        justify-content: space-between;
+        margin: 8px 0;
+      }
+
+      .search-container input {
+        width: 100%;
+      }
+    }
+
+  
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .movie-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .movie-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      position: relative;
+    }
+
+    .promoted-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: crimson;
+      color: white;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+
+    .movie-footer {
+      background: #000;
+      color: white;
+      font-size: 14px;
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .movie-info {
+      padding: 10px;
+    }
+
+    .movie-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .movie-genre {
+      font-size: 13px;
+      color: #777;
+    }
+
+    @media (max-width: 768px) {
+      .movie-poster {
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .movie-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .movie-poster {
+        height: 160px;
+      }
+    }
+
+
+    .banner {
+      width: 100%;
+      margin: 20px 0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 30px 20px 20px;
+    }
+
+    .event-card {
+      border-radius: 12px;
+      overflow: hidden;
+      color: #fff;
+      text-align: left;
+      padding: 20px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.2s;
+    }
+
+    .event-card:hover {
+      transform: scale(1.02);
+      cursor: pointer;
+    }
+
+    .event-title {
+      font-size: 22px;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .event-count {
+      font-size: 16px;
+      margin-top: 5px;
+    }
+
+    .scroll-container {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 0 20px 20px;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="left-nav">
+      <div class="logo">My <span>tickets</span>show</div>
+      <select>
+        <option selected>Indore</option>
+        <option>Mumbai</option>
+        <option>Delhi</option>
+        <option>Jaipur</option>
+      </select>
+    </div>
+
+    <div class="right-nav">
+      <div class="search-container">
+        <input type="text" placeholder="Search for Movies, Events..." />
+      </div>
+      <div class="nav-links">
+        <a href="#">Movies</a>
+        <a href="#">Events</a>
+        <a href="#">Plays</a>
+        <a href="#">Offers</a>
+      </div>
+      <span class="user-name" id="userDisplay">Hello, Guest</span>
+      <button class="login-btn" onclick="loginUser()">Sign In</button>
+      <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <a href="#">Movies</a>
+    <a href="#">Events</a>
+    <a href="#">Plays</a>
+    <a href="#">Sports</a>
+    <a href="#">Activities</a>
+  </div>
+
+
+  <div id="carouselExample" class="carousel slide">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://assets-in-gm.bmscdn.com/promotions/cms/creatives/1751011831551_halwastandupcomedydesktopjuly.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="https://assets-in-gm.bmscdn.com/promotions/cms/creatives/1744877848242_revplaycard1240x300.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="https://assets-in-gm.bmscdn.com/promotions/cms/creatives/1752039451736_humareramdesktopjul.jpg" class="d-block w-100" alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+
+
+  <h2>Recommended Movies</h2>
+  <div class="movie-container">
+
+    <!-- Movie 1 -->
+    <div class="movie-card">
+      <div style="position: relative;">
+        <img src="https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@star-icon-202203010609.png,lx-24,ly-615,w-29,l-end:l-text,ie-OS4zLzEwICAxLjJLIFZvdGVz,fs-29,co-FFFFFF,ly-612,lx-70,pa-8_0_0_0,l-end:l-text,ie-UFJPTU9URUQ%3D,co-FFFFFF,bg-DC354B,ff-Roboto,fs-20,lx-N16,ly-12,lfo-top_right,pa-12_14_12_14,r-6,l-end/et00440977-qjxttvdcyp-portrait.jpg" class="movie-poster" alt="Tanvi">
+        <div class="promoted-badge">PROMOTED</div>
+      </div>
+      <div class="movie-footer">
+        <span>⭐ 9.3/10</span>
+        <span>1.1K Votes</span>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">Tanvi: The Great</div>
+        <div class="movie-genre">Drama</div>
+      </div>
+    </div>
+
+    <!-- Movie 2 -->
+    <div class="movie-card">
+      <div style="position: relative;">
+        <img src="https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@star-icon-202203010609.png,lx-24,ly-615,w-29,l-end:l-text,ie-OC43LzEwICA3ODkgVm90ZXM%3D,fs-29,co-FFFFFF,ly-612,lx-70,pa-8_0_0_0,l-end:l-text,ie-UFJPTU9URUQ%3D,co-FFFFFF,bg-DC354B,ff-Roboto,fs-20,lx-N16,ly-12,lfo-top_right,pa-12_14_12_14,r-6,l-end/et00337905-hwlpatmtgs-portrait.jpg" class="movie-poster" alt="Nikita">
+        <div class="promoted-badge">PROMOTED</div>
+      </div>
+      <div class="movie-footer">
+        <span>⭐ 8.7/10</span>
+        <span>786 Votes</span>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">Nikita Roy</div>
+        <div class="movie-genre">Horror/Mystery</div>
+      </div>
+    </div>
+
+    <!-- Movie 3 -->
+    <div class="movie-card">
+      <img src="https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@star-icon-202203010609.png,lx-24,ly-615,w-29,l-end:l-text,ie-OC44LzEwICA0NS44SyBWb3Rlcw%3D%3D,fs-29,co-FFFFFF,ly-612,lx-70,pa-8_0_0_0,l-end/et00447951-kdzpgwsjte-portrait.jpg" class="movie-poster" alt="Saiyaara">
+      <div class="movie-footer">
+        <span>⭐ 8.8/10</span>
+        <span>45.3K Votes</span>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">Saiyaara</div>
+        <div class="movie-genre">Drama/Musical</div>
+      </div>
+    </div>
+
+    <!-- Movie 4 -->
+    <div class="movie-card">
+      <img src="https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@star-icon-202203010609.png,lx-24,ly-615,w-29,l-end:l-text,ie-Ny45LzEwICAxNC4xSyBWb3Rlcw%3D%3D,fs-29,co-FFFFFF,ly-612,lx-70,pa-8_0_0_0,l-end/et00443433-pgfkdkdjnh-portrait.jpg" class="movie-poster" alt="Maalik">
+      <div class="movie-footer">
+        <span>⭐ 7.9/10</span>
+        <span>14K Votes</span>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">Maalik</div>
+        <div class="movie-genre">Action/Drama</div>
+      </div>
+    </div>
+
+    <!-- Movie 5 -->
+    <div class="movie-card">
+      <img src="https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@star-icon-202203010609.png,lx-24,ly-615,w-29,l-end:l-text,ie-OC4yLzEwICAzNS42SyBWb3Rlcw%3D%3D,fs-29,co-FFFFFF,ly-612,lx-70,pa-8_0_0_0,l-end/et00397464-ggmherrzul-portrait.jpg" class="movie-poster" alt="Superman">
+      <div class="movie-footer">
+        <span>⭐ 8.2/10</span>
+        <span>35.6K Votes</span>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">Superman</div>
+        <div class="movie-genre">Adventure/Fantasy</div>
+      </div>
+    </div>
+
+  </div>
+
+
+ 
+
+
+  <!-- Banner -->
+  <div class="container">
+    <img src="https://assets-in.bmscdn.com/discovery-catalog/collections/tr:w-1440,h-120/stream-leadin-web-collection-202210241242.png" alt="Banner" class="banner w-100">
+  </div>
+
+  <!-- Section Title -->
+  <div class="section-title">The Best Of Live Events</div>
+
+  <!-- Event Cards Scrollable -->
+  <div class="scroll-container">
+
+    <div class="event-card" style="min-width: 220px; background-image: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0)), url('https://assets-in.bmscdn.com/discovery-catalog/collections/tr:w-800,h-800:l-text,ie-MTUrIEV2ZW50cw%3D%3D,co-FFFFFF,ff-Roboto,fs-64,lx-48,ly-320,tg-b,pa-8_0_0_0,l-end:w-300/comedy-shows-collection-202211140440.png');">
+      <div class="event-title">Comedy Shows</div>
+      <div class="event-count">15+ Events</div>
+    </div>
+
+    <div class="event-card" style="min-width: 220px; background-image: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0)), url('https://assets-in.bmscdn.com/discovery-catalog/collections/tr:w-800,h-800:l-text,ie-MyBFdmVudHM%3D,co-FFFFFF,ff-Roboto,fs-64,lx-48,ly-320,tg-b,pa-8_0_0_0,l-end:w-300/amusement-parks-banner-desktop-collection-202503251132.png');">
+      <div class="event-title">Amusement Park</div>
+      <div class="event-count">3 Events</div>
+    </div>
+
+    <div class="event-card" style="min-width: 220px; background-image: linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0)), url('https://assets-in.bmscdn.com/discovery-catalog/collections/tr:w-800,h-800:l-text,ie-NCBFdmVudHM%3D,co-FFFFFF,ff-Roboto,fs-64,lx-48,ly-320,tg-b,pa-8_0_0_0,l-end:w-300/kids-banner-desktop-collection-202503251132.png');">
+      <div class="event-title">Kids</div>
+      <div class="event-count">4 Events</div>
+    </div>
+
+    <div class="event-card" style="min-width: 220px; background-image: linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0)), url('https://assets-in.bmscdn.com/discovery-catalog/collections/tr:w-800,h-800:l-text,ie-NSBFdmVudHM%3D,co-FFFFFF,ff-Roboto,fs-64,lx-48,ly-320,tg-b,pa-8_0_0_0,l-end:w-300/music-shows-collection-202211140440.png');">
+      <div class="event-title">Music Shows</div>
+      <div class="event-count">5 Events</div>
+    </div>
+
+    <div class="event-card" style="min-width: 220px; background-image: linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0)), url('https://assets-in.bmscdn.com/discovery-catalog/collections/tr:w-800,h-800:l-text,ie-MTArIEV2ZW50cw%3D%3D,co-FFFFFF,ff-Roboto,fs-64,lx-48,ly-320,tg-b,pa-8_0_0_0,l-end:w-300/arts-crafts-collection-202211140440.png');">
+      <div class="event-title">Art & Crafts</div>
+      <div class="event-count">10+ Events</div>
+    </div>
+
+  </div>
+
+<
+
+
+
+  <!-- Script -->
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    // Dummy Login Simulation
+    function loginUser() {
+      const userName = prompt("Enter your name:");
+      if (userName && userName.trim() !== "") {
+        localStorage.setItem("username", userName.trim());
+        updateUserDisplay();
+      }
+    }
+
+    function updateUserDisplay() {
+      const user = localStorage.getItem("username") || "Guest";
+      document.getElementById("userDisplay").textContent = `Hello, ${user}`;
+    }
+
+    // On load
+    updateUserDisplay();
+  </script>
+
+</body>
+</html>
